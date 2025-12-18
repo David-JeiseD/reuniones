@@ -20,7 +20,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ route('home') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -30,7 +30,23 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                    @auth
+                        @if(auth()->user()->hasRole('admin'))
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-primary" href="{{ route('admin.dashboard') }}">PANEL ADMIN</a>
+                            </li>
+                            
+                            
+                            <!-- Link a la Gestión de UGELs -->
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-success" href="{{ route('ugels.index') }}">GESTIÓN UGELs</a>
+                            </li>
+                        @endif
+                        
+                        <li class="nav-item">
+                            <span class="nav-link text-dark">{{ Auth::user()->name }} ({{ Auth::user()->cargo }})</span>
+                        </li>
+                    @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -50,20 +66,14 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                    <img src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.auth()->user()->name }}" 
+                                        class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
                                     {{ Auth::user()->name }}
                                 </a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a class="dropdown-item" href="{{ route('perfil') }}">Ver Mi Perfil</a>
+                                    <!-- Aquí NO hay botón de cerrar sesión como pediste -->
                                 </div>
                             </li>
                         @endguest
@@ -76,5 +86,19 @@
             @yield('content')
         </main>
     </div>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            title: '¡Éxito!',
+            text: "{{ session('success') }}",
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        });
+    </script>
+    @endif
+    <!-- SweetAlert2 for error messages -->
 </body>
 </html>

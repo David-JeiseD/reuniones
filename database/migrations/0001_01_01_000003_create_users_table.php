@@ -19,8 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->string('dni')->unique()->nullable();
             $table->string('cargo')->nullable(); // Director, Docente, Auxiliar
-            $table->string('ugel')->nullable();
             $table->boolean('perfil_completo')->default(false);
+            $table->string('avatar')->nullable(); // Para la foto
+            $table->foreignId('ugel_id')->nullable()->constrained('ugels');
             $table->rememberToken();
             $table->timestamps();
         });
